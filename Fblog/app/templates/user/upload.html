@@ -1,0 +1,11 @@
+{% extends 'common/base.html' %}
+
+{% block center_content %}
+
+    {#  显示当前的用户头像  #}
+    <img class="user-icon" src="{{ imgurl }}">
+
+    {# 渲染上传表单form #}
+    {{ wtf.quick_form(form) }}
+
+{% endblock %}

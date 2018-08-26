@@ -1,0 +1,53 @@
+
+
+{% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li>
+                <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% endif %}
+        {% if page_obj.number == 1 %}
+            <li class="disabled" aria-label="Previous"><span
+                            aria-hidden="true">&laquo;</span></li>
+            {% endif %}
+             {% for i in page_range %}
+
+                    {% if page_obj.number == i %}
+                        <li class="active"><a href="?page={{ i }}">{{ i }} <span class="sr-only">{{ i }}</span></a></li>
+                    {% else %}
+                        <li><a href="?page={{ i }}">{{ i }}<span class="sr-only">{{ i }}</span></a></li>
+                    {% endif %}
+                {% endfor %}
+         {% if page_obj.has_next %}
+            <li>
+                <a href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+         {% endif %}
+         {% if page_obj.number == paginator.num_pages %}
+            <li class="disabled" aria-label="Previous"><span
+                            aria-hidden="true">&raquo;</span></li>
+            {% endif %}
+
+        <form>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="page" placeholder="">
+                                <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">跳转</button>
+      </span>
+                            </div><!-- /input-group -->
+                        </div><!-- /.col-lg-6 -->
+                    </div><!-- /.row -->
+                </form>
+
+        </ul>
+    </nav>
+{% endif %}

@@ -1,0 +1,7 @@
+{#父模板继承了bootstrap/base.html#}
+{# 父模板引入了bootstrap/wtf.html #}
+{% extends 'common/base.html' %}
+{% block center_content %}
+    {# 快速渲染后台传过来的FlaskForm对象 #}
+    {{ wtf.quick_form(form) }}
+{% endblock %}

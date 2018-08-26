@@ -1,0 +1,33 @@
+{# 使用bootstrap样式渲染分页器 #}
+{#
+    需要后台提供：
+    页码范围：pagination.iter_pages() 0,1,2,3...
+    当前页码：page参数
+    每个页码对应的路由函数：endpoint 【蓝图.视图函数】形如'uer.login'
+#}
+{% macro show_pagination(pagination,page,endpoint) %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+
+            <li {% if not pagination.has_prev %}class="disabled"{% endif %}>
+                <a href="{{ url_for(endpoint,page=pagination.prev_num) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            {# 遍历页码 #}
+            {% for p in pagination.iter_pages() %}
+                <li {% if p==page %}class="active"{% endif %}>
+                    {# 显示页码，url='/?page=3' #}
+                    <a href="{{ url_for(endpoint,page=p) }}">{{ p }}</a>
+                </li>
+            {% endfor %}
+
+            <li {% if not pagination.has_next %}class="disabled"{% endif %}>
+                <a href="{{ url_for(endpoint,page=pagination.next_num) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endmacro %}

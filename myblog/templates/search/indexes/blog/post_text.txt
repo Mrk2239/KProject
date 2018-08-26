@@ -1,0 +1,7 @@
+{{object.title}}
+{{object.content}}
+{{object.modified_time}}
+{{object.created_time}}
+{{object.category}}
+{{object.tags}}
+{{ object.author.username }}

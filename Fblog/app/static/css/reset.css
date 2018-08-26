@@ -1,0 +1,16 @@
+.user-icon{
+    width:64px;
+    height: 64px;
+}
+
+.post-list{
+    overflow: hidden;
+}
+
+.fl{
+    float:left;
+}
+
+.fr{
+    float:right;
+}

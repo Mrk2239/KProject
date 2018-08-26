@@ -1,0 +1,125 @@
+{# 全局父模板继承了bootstrap/base.html#}
+{# 全局父模板引入了bootstrap/wtf.html #}
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+    {{ super() }}
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='css/reset.css') }}"/>
+    <style type="text/css">
+        .navbar {
+            border-radius: 0;
+        }
+
+        .center-box {
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container-fluid {
+            padding-right: 0;
+            padding-left: 0;
+        }
+
+        .copyright{
+            padding: 10px;
+            text-align: center;
+        }
+
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+   {# 加载moment.js #}
+   {{ moment.include_moment() }}
+
+   {# 设置中文显示 #}
+   {{ moment.locale('zh-CN') }}
+{% endblock %}
+
+{% block content %}
+
+    {# 所有页面共用的导航栏样式 #}
+    <nav class="navbar navbar-inverse">
+        <div class="center-box container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('mainbp.index') }}">首页</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="http://www.baidu.com" target="_self">板块一<span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">板块二</a></li>
+                </ul>
+
+
+                <ul class="nav navbar-nav navbar-right">
+
+                    {# 如果用户已登录，则显示【退出】和【下拉菜单】 #}
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('userbp.logout') }}">退出</a></li>
+
+                        {# 在局部使用一个bootstrap的下拉菜单 #}
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" id="dropdownMenu1"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                {{ current_user.username }}
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{ url_for('userbp.profile') }}">用户信息</a></li>
+                                <li><a href="#">修改密码</a></li>
+                                <li><a href="#">修改邮箱</a></li>
+                                <li><a href="{{ url_for('userbp.upload_icon') }}">修改头像</a></li>
+                            </ul>
+                        </li>
+
+                    {# 如果用户没有登录，则显示【注册】和【登录】 #}
+                    {% else %}
+                        <li><a href="{{ url_for('userbp.register') }}">注册</a></li>
+                        <li><a href="{{ url_for('userbp.login') }}">登录</a></li>
+                    {% endif %}
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+    {# 正文区域，集成闪送消息 #}
+    <div class="center-box">
+
+        {# 显示flash消息 #}
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+
+                {# 显示闪送消息的内容 #}
+                <strong>message:</strong> {{ message }}
+            </div>
+        {% endfor %}
+
+        {# 挖一个空的block，待子模板自行实现正文主体内容 #}
+        {% block center_content %}{% endblock %}
+
+        {# 版权信息 #}
+        {% block footer %}
+            <p class="copyright">这里是版权信息</p>
+        {% endblock %}
+
+    </div>
+
+
+
+{% endblock %}

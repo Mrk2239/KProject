@@ -1,0 +1,137 @@
+{% extends 'common/base.html' %}
+{% from 'common/macros.html' import show_pagination %}
+
+{% block styles %}
+    {{ super() }}
+    <style type="text/css">
+        .post-list {
+            margin-top: 20px;
+        }
+
+        .post-list li {
+            height: 100px;
+        }
+
+        .post-list li .middle-box {
+            margin-left: 15px;
+        }
+
+        .post-list li .right-box {
+            height: 90px;
+            line-height: 70px;
+            width: 100px;
+            text-align: center;
+        }
+
+        .user-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        .user-name {
+            margin-top: 2px;
+        }
+
+        span.collect{
+            cursor: pointer;
+            color: #ee8aff;
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <script type="text/javascript">
+        {# 页面完成以后，加载收藏和取消功能的监听事件 #}
+        $(function () {
+
+            {# 遍历所有类为collect的span标签（每页5个），为其增加事件监听 #}
+            {# i为遍历中的下标，element为遍历中的标签 #}
+            $('span.collect').each(function (i, element) {
+
+                {# 为当前标签增加点击事件 #}
+                $(element).click(function () {
+
+                    {# 发起Ajax请求 #}
+                    $.ajax({
+
+                        /*这里用一个本地地址模拟远程地址*/
+                        url: $(element).attr('fuckurl'),
+
+                        /*请求类型，可以是get或post*/
+                        type: 'get',
+
+                        /*请求的数据类型，通常就是json*/
+                        dataType: 'json'
+                    })
+
+                    /*数据获取成功回调，data就是服务端返回的json数据*/
+                    {# 数据格式：{'result':False} #}
+                        .done(function (data) {
+                            if(data.result==true){
+                                $(element).text('取消收藏');
+                            }else{
+                                $(element).text('收藏');
+                            }
+                        })
+
+                        /*加载失败回调*/
+                        .fail(function () {
+                            alert('通信失败');
+                        });
+                })
+
+            })
+
+        })
+    </script>
+
+{% endblock %}
+
+{#覆写父模板中的中心内容#}
+{% block center_content %}
+
+    {# 渲染博文编辑表单 #}
+    {{ wtf.quick_form(form) }}
+
+    {#展示博文数据#}
+    <ul class="list-group post-list">
+        {# 遍历后台传递过来的posts数据 #}
+        {% for post in posts %}
+            <li class="list-group-item">
+                {# 通过静态路由访问用户头像 #}
+                <img class="fl user-icon" src="{{ url_for('static',filename='uploads/'+post.user.icon) }}">
+                <div class="fl middle-box">
+                    {# 显示用户名 #}
+                    <h4 class="user-name">{{ post.user.username }}</h4>
+
+                    {# 显示博客内容 #}
+                    <p>{{ post.content }}</p>
+
+                    {# 如果用户已登录，就展示收藏/取消收藏功能 #}
+                    {% if current_user.is_authenticated %}
+
+                        {# 如果用户已收藏,就显示"取消收藏",否则显示"收藏" #}
+                        {% if current_user.is_collected(post.id) %}
+                            <span class="collect" fuckurl="{{ url_for('postbp.switch_collect',pid=post.id) }}">取消收藏</span>
+                        {% else %}
+                            <span class="collect" fuckurl="{{ url_for('postbp.switch_collect',pid=post.id) }}">收藏</span>
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+                <div class="fr right-box">
+                    {{ moment(post.posttime).fromNow() }}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {# 分页器要展示页码范围，通过pagination获取，分页器的样式渲染比较复杂，复用率高，所以抽成了宏 #}
+    {{ show_pagination(pagination,page,'mainbp.index') }}
+
+{% endblock %}
+
+
